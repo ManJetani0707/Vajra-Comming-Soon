@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V.A.J.R.A. - Coming Soon</title>
+    <style>
+        :root {
+            --bg-color: #000000; /* deep space black */
+            --orange: #e85d22;
+            --blue: #0a84ff;
+            --gold: #d4af37;
+            --text-color: #f0f0f5;
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 15px 35px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(20, 10, 40, 0.5), transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(10, 30, 60, 0.4), transparent 50%);
+            color: var(--text-color);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Canvas Background */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+        }
+
+        /* Aurora Nebula Glow */
+        .nebula-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90vw;
+            height: 90vh;
+            background: radial-gradient(circle, rgba(10, 132, 255, 0.15) 0%, rgba(2, 2, 5, 0) 65%);
+            z-index: -1;
+            filter: blur(120px);
+            pointer-events: none;
+            animation: pulse-glow 12s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.9; }
+        }
+
+        /* Space Elements (Planets & Satellites) */
+        .space-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            box-shadow: inset -20px -20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(255,255,255,0.1);
+        }
+
+        .planet-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d);
+            top: -150px;
+            right: -100px;
+            opacity: 0.25;
+            animation: float-planet 60s infinite linear;
+        }
+
+        .planet-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            bottom: 5%;
+            left: 5%;
+            opacity: 0.35;
+            animation: float-planet-alt 40s infinite alternate ease-in-out;
+        }
+
+        .satellite-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 350px;
+            height: 350px;
+            margin-top: -175px;
+            margin-left: -175px;
+            animation: orbit-satellite 15s infinite linear;
+        }
+
+        .satellite {
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            box-shadow: 0 0 10px #fff, 0 0 20px var(--blue);
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            margin-left: -6px;
+        }
+
+        .satellite::before, .satellite::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 8px;
+            background: rgba(10, 132, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            top: 2px;
+        }
+        
+        .satellite::before { left: -28px; }
+        .satellite::after { right: -28px; }
+
+        @keyframes float-planet {
+            0% { transform: rotate(0deg) translate(0, 0); }
+            50% { transform: rotate(180deg) translate(30px, 30px); }
+            100% { transform: rotate(360deg) translate(0, 0); }
+        }
+
+        @keyframes float-planet-alt {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-40px) scale(1.05); }
+        }
+
+        @keyframes orbit-satellite {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 10px 5%;
+            display: flex;
+            align-items: center;
+            background: rgba(2, 2, 5, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 100;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .navbar:hover {
+            background: rgba(2, 2, 5, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .nav-logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .logo-wrapper {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .orbital-ring {
+            position: absolute;
+            width: 140%;
+            height: 140%;
+            border: 1px solid transparent;
+            border-top: 1px solid rgba(232, 93, 34, 0.5);
+            border-right: 1px solid rgba(10, 132, 255, 0.5);
+            border-radius: 50%;
+            animation: spin 6s linear infinite;
+            transition: all 0.4s ease;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .logo-img {
+            width: 44px;
+            height: 44px;
+            background: transparent;
+            object-fit: contain;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            color: transparent;
+            transition: transform 0.4s ease, filter 0.4s ease;
+        }
+
+        .nav-logo-container:hover .logo-img {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4));
+        }
+
+        .nav-logo-container:hover .orbital-ring {
+            border-top: 1px solid rgba(232, 93, 34, 1);
+            border-right: 1px solid rgba(10, 132, 255, 1);
+            box-shadow: 0 0 15px rgba(10, 132, 255, 0.4);
+        }
+
+        .brand-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--text-color);
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+            transition: text-shadow 0.3s ease;
+            cursor: default;
+        }
+
+        .brand-name:hover {
+            text-shadow: 0 0 30px rgba(212, 175, 55, 1);
+        }
+
+        /* Container for sections */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 140px 20px 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 100px;
+        }
+
+        /* Hidden section for scroll animation */
+        .hidden-section {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .visible-section {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .badge {
+            background: rgba(232, 93, 34, 0.1);
+            border: 1px solid rgba(232, 93, 34, 0.4);
+            color: var(--orange);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(232, 93, 34, 0.15);
+            margin-bottom: 10px;
+            animation: badge-pulse 2.5s infinite;
+        }
+
+        @keyframes badge-pulse {
+            0% { box-shadow: 0 0 10px rgba(232, 93, 34, 0.15); }
+            50% { box-shadow: 0 0 25px rgba(232, 93, 34, 0.4); }
+            100% { box-shadow: 0 0 10px rgba(232, 93, 34, 0.15); }
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            background: linear-gradient(to right, #ffffff, #a0d0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            transition: transform 0.3s ease;
+        }
+
+        .hero h1:hover {
+            transform: scale(1.02);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #a0a0b0;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+
+        /* Teaser Cards */
+        .teaser-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .teaser-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 40px 30px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .teaser-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            transform: skewX(-20deg);
+            transition: 0.5s;
+        }
+
+        .teaser-card:hover::before {
+            left: 200%;
+        }
+
+        .teaser-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(10, 132, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 25px rgba(10, 132, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            opacity: 0.95;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-origin: center;
+            display: inline-block;
+        }
+
+        .teaser-card:hover .card-icon {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: #a0a0b0;
+            line-height: 1.6;
+        }
+
+        /* Email Notify */
+        .email-section {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 50px;
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .email-section:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .email-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #eaeaea;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .email-form {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            position: relative;
+        }
+
+        .email-input {
+            flex: 1;
+            padding: 16px 24px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .email-input:focus {
+            border-color: rgba(10, 132, 255, 0.5);
+            box-shadow: 0 0 15px rgba(10, 132, 255, 0.2);
+        }
+
+        .notify-btn {
+            padding: 16px 36px;
+            border-radius: 50px;
+            border: 1px solid transparent;
+            background: linear-gradient(45deg, var(--orange), #d94b15);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .notify-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(232, 93, 34, 0.4);
+        }
+
+        .notify-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: skewX(-20deg);
+        }
+
+        .notify-btn:hover::before {
+            animation: sweep 0.8s;
+        }
+
+        @keyframes sweep {
+            100% { left: 200%; }
+        }
+
+        .success-msg {
+            margin-top: 15px;
+            color: var(--blue);
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            display: none;
+            letter-spacing: 0.5px;
+        }
+
+        .success-msg.show {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--glass-border);
+            background: rgba(2, 2, 5, 0.6);
+            backdrop-filter: blur(10px);
+            width: 100%;
+        }
+
+        .footer-text {
+            color: #707080;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-copyright {
+            color: #505060;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .hero p { font-size: 1.1rem; }
+            .teaser-grid { grid-template-columns: 1fr; }
+            .email-section { padding: 35px 25px; }
+            .email-form { flex-direction: column; width: 100%; align-items: center; }
+            .email-input { width: 100%; }
+            .notify-btn { width: 100%; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+    <div class="nebula-glow"></div>
+
+    <!-- Animated Space Background Elements -->
+    <div class="space-elements">
+        <div class="planet planet-1"></div>
+        <div class="planet planet-2">
+            <div class="satellite-wrapper">
+                <div class="satellite"></div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-logo-container">
+            <div class="logo-wrapper">
+                <div class="orbital-ring"></div>
+                <img src="vajra-logo (1).png" alt="Logo" class="logo-img" id="navLogo" onerror="this.style.display='none'">
+            </div>
+            <div class="brand-name">V.A.J.R.A.</div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero hidden-section">
+            <div class="badge">🏆 Bharatiya Antariksh Hackathon 2026</div>
+            <h1>The Storm Doesn't Wait.<br>Neither Do We.</h1>
+            <p>A new era of satellite protection is almost here.</p>
+        </section>
+
+        <!-- Teaser Cards -->
+        <section class="teaser-cards hidden-section">
+            <div class="teaser-grid">
+                <div class="teaser-card">
+                    <div class="card-icon">🛰️</div>
+                    <div class="card-title">Built for India's space fleet</div>
+                    <p class="card-desc">Engineered to protect and monitor our most critical orbital assets with unmatched precision and reliability.</p>
+                </div>
+                <div class="teaser-card">
+                    <div class="card-icon">⚡</div>
+                    <div class="card-title">Powered by deep learning</div>
+                    <p class="card-desc">Utilizing advanced AI models to predict anomalies, detect threats, and automate responses in real-time.</p>
+                </div>
+                <div class="teaser-card">
+                    <div class="card-icon">🌐</div>
+                    <div class="card-title">Validated on real satellite data</div>
+                    <p class="card-desc">Trained and tested rigorously against historical telemetry and operational data from active missions.</p>
+                </div>
+                <div class="teaser-card">
+                    <div class="card-icon">🔒</div>
+                    <div class="card-title">Details coming soon</div>
+                    <p class="card-desc">Stay tuned as we prepare to unveil the complete architecture behind the V.A.J.R.A. defense system.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Email Notify -->
+        <section class="email-notify hidden-section">
+            <div class="email-section">
+                <h2>Be the first to know.</h2>
+                <form class="email-form" id="notifyForm">
+                    <input type="email" class="email-input" id="emailInput" placeholder="Enter your email address" required>
+                    <button type="submit" class="notify-btn">Notify Me</button>
+                </form>
+                <div class="success-msg" id="successMsg">Thanks! We'll notify you when we launch.</div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="hidden-section">
+        <div class="footer-text">Built with ❤️ for India's space mission</div>
+        <div class="footer-copyright">&copy; 2026 Team AstroDefenders &middot; All rights reserved</div>
+    </footer>
+
+    <script>
+        // Canvas Starfield with Parallax
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let stars = [];
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        function initCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            stars = [];
+            const numStars = Math.floor((width * height) / 1500); // Slightly fewer stars for realism
+            
+            for (let i = 0; i < numStars; i++) {
+                const rand = Math.random();
+                let starColor = 'rgba(255, 255, 255, 0.8)';
+                if (rand > 0.85) starColor = 'rgba(170, 210, 255, 0.8)'; // Pale blue
+                else if (rand > 0.95) starColor = 'rgba(255, 210, 170, 0.8)'; // Pale orange
+
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    z: Math.random() * 2 + 0.1,
+                    size: Math.random() * 1.2 + 0.3, // Smaller stars
+                    color: starColor,
+                    baseAlpha: Math.random() * 0.6 + 0.2
+                });
+            }
+        }
+
+        window.addEventListener('resize', initCanvas);
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - width / 2) * 0.03; // Subtler parallax
+            mouseY = (e.clientY - height / 2) * 0.03;
+        });
+
+        function animateStars() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Smooth parallax target interpolation
+            targetX += (mouseX - targetX) * 0.05;
+            targetY += (mouseY - targetY) * 0.05;
+            
+            stars.forEach(star => {
+                let px = star.x - targetX * star.z;
+                let py = star.y - targetY * star.z;
+                
+                // Wrap around
+                if (px < 0) px += width;
+                if (px > width) px -= width;
+                if (py < 0) py += height;
+                if (py > height) py -= height;
+                
+                // Twinkle effect (subtle)
+                let alpha = star.baseAlpha + Math.sin(Date.now() * 0.0005 * star.z) * 0.15;
+                alpha = Math.max(0.1, Math.min(1, alpha));
+                
+                ctx.beginPath();
+                ctx.arc(px, py, star.size, 0, Math.PI * 2);
+                ctx.fillStyle = star.color;
+                ctx.globalAlpha = alpha;
+                ctx.fill();
+            });
+            
+            requestAnimationFrame(animateStars);
+        }
+
+        initCanvas();
+        animateStars();
+
+        // Scroll Intersection Observer for Fade-ins
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible-section');
+                    // Unobserve after showing
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.hidden-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Email Form Submission
+        const form = document.getElementById('notifyForm');
+        const emailInput = document.getElementById('emailInput');
+        const successMsg = document.getElementById('successMsg');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+            if (email) {
+                // Save to LocalStorage
+                let emails = JSON.parse(localStorage.getItem('vajra_subscribers') || '[]');
+                if (!emails.includes(email)) {
+                    emails.push(email);
+                    localStorage.setItem('vajra_subscribers', JSON.stringify(emails));
+                }
+                
+                // Show success
+                form.style.display = 'none';
+                successMsg.classList.add('show');
+                
+                // Optional: reset and show form again after few seconds
+                setTimeout(() => {
+                    emailInput.value = '';
+                    form.style.display = 'flex';
+                    successMsg.classList.remove('show');
+                }, 5000);
+            }
+        });
+
+    </script>
+</body>
+</html>
