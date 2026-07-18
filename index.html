@@ -313,6 +313,29 @@
             transform: scale(1.02);
         }
 
+        .coming-soon-text {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 12px;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--orange);
+            text-shadow: 0 0 20px rgba(232, 93, 34, 0.4);
+            margin: 5px 0 15px;
+            text-transform: uppercase;
+            animation: pulse-glow-text 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulse-glow-text {
+            0% { 
+                text-shadow: 0 0 10px rgba(232, 93, 34, 0.2); 
+                -webkit-text-stroke: 1px rgba(232, 93, 34, 0.5);
+            }
+            100% { 
+                text-shadow: 0 0 30px rgba(232, 93, 34, 0.9), 0 0 10px rgba(212, 175, 55, 0.6);
+                -webkit-text-stroke: 1px rgba(212, 175, 55, 1);
+            }
+        }
+
         .hero p {
             font-size: 1.3rem;
             color: #a0a0b0;
@@ -562,6 +585,7 @@
         <section class="hero hidden-section">
             <div class="badge">🏆 Bharatiya Antariksh Hackathon 2026</div>
             <h1>The Storm Doesn't Wait.<br>Neither Do We.</h1>
+            <h2 class="coming-soon-text">COMING SOON</h2>
             <p>A new era of satellite protection is almost here.</p>
         </section>
 
