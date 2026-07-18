@@ -178,6 +178,7 @@
             align-items: center;
             gap: 15px;
             position: relative;
+            cursor: pointer;
         }
 
         .logo-wrapper {
@@ -227,6 +228,19 @@
             border-top: 1px solid rgba(232, 93, 34, 1);
             border-right: 1px solid rgba(10, 132, 255, 1);
             box-shadow: 0 0 15px rgba(10, 132, 255, 0.4);
+        }
+
+        .nav-logo-container.logo-clicked .logo-img {
+            transform: scale(2.2);
+            filter: drop-shadow(0 0 30px rgba(255, 255, 255, 1));
+        }
+
+        .nav-logo-container.logo-clicked .orbital-ring {
+            border-top: 2px solid rgba(232, 93, 34, 1);
+            border-right: 2px solid rgba(10, 132, 255, 1);
+            box-shadow: 0 0 40px rgba(10, 132, 255, 0.8);
+            width: 300%;
+            height: 300%;
         }
 
         .brand-name {
@@ -728,6 +742,14 @@
         document.querySelectorAll('.hidden-section').forEach(section => {
             observer.observe(section);
         });
+
+        // Logo Click Animation
+        const navLogoContainer = document.querySelector('.nav-logo-container');
+        if(navLogoContainer) {
+            navLogoContainer.addEventListener('click', () => {
+                navLogoContainer.classList.toggle('logo-clicked');
+            });
+        }
 
         // Email Form Submission
         const form = document.getElementById('notifyForm');
